@@ -1,0 +1,23 @@
+{
+  "name": "mcp-gate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Satu gerbang MCP untuk banyak akun (Buffer dulu, layanan lain menyusul). Berjalan di Cloudflare Workers.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
+    "test:e2e": "node test/e2e.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261102.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.156.2"
+  },
+  "dependencies": {
+    "@cloudflare/workers-oauth-provider": "1.2.4"
+  }
+}

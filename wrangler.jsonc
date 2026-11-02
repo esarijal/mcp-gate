@@ -1,0 +1,31 @@
+{
+  // Konfigurasi Cloudflare Workers untuk mcp-gate.
+  // Rahasia TIDAK ditulis di sini. Isi dengan: npx wrangler secret put NAMA_SECRET
+  //   OWNER_PASSPHRASE, BUFFER_KEY_<LABEL> (satu per akun)
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mcp-gate",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // Fetch keluar hanya ke internet publik (pertahanan SSRF berlapis).
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    // Ganti dengan URL Worker-mu setelah deploy pertama, mis. https://mcp-gate.namamu.workers.dev
+    "PUBLIC_URL": "https://mcp-gate.GANTI.workers.dev",
+    "ALLOWED_REDIRECT_HOSTS": "claude.ai,claude.com"
+  },
+  "kv_namespaces": [
+    // Buat dengan: npx wrangler kv namespace create OAUTH_KV, lalu tempel id-nya di sini.
+    { "binding": "OAUTH_KV", "id": "GANTI_DENGAN_ID_KV" }
+  ],
+  "ratelimits": [
+    // 20 percobaan per menit per IP (IPv6 per /64) untuk /authorize dan /setup.
+    { "name": "AUTH_LIMITER", "namespace_id": "41001", "simple": { "limit": 20, "period": 60 } }
+  ],
+  "observability": {
+    "enabled": true,
+    // Jangan catat URL/header request secara otomatis.
+    "logs": { "enabled": true, "invocation_logs": false }
+  }
+}

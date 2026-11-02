@@ -1,0 +1,11 @@
+# Salin jadi .dev.vars untuk uji lokal (npm run dev). Jangan di-commit.
+
+# URL lokal Worker saat npm run dev.
+PUBLIC_URL=http://localhost:8787
+
+# Passphrase pemilik: minimal 32 karakter dan acak. Buat dengan: openssl rand -base64 33
+OWNER_PASSPHRASE=ganti-dengan-hasil-openssl-rand-base64-33
+
+# Satu variabel per akun Buffer. Bagian setelah BUFFER_KEY_ menjadi label akun (huruf kecil).
+BUFFER_KEY_KAWANCERITAMU=api-key-buffer-akun-pertama
+BUFFER_KEY_ESARIJAL=api-key-buffer-akun-kedua
