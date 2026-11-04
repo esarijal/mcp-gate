@@ -26,13 +26,18 @@ export async function bufferGraphQL<T = Record<string, unknown>>(
       },
       body: JSON.stringify({ query, variables: variables ?? {} }),
       signal: AbortSignal.timeout(TIMEOUT_MS),
-      redirect: "error",
+      // Workers tidak mendukung redirect "error"; pakai "manual" lalu tolak 3xx di bawah
+      // supaya API key tidak pernah ikut terkirim ke host lain.
+      redirect: "manual",
     });
   } catch (err) {
     const timedOut = err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError");
     throw new UserError(timedOut ? "Buffer tidak merespons (timeout). Coba lagi." : "Tidak bisa menghubungi Buffer.");
   }
 
+  if (res.status >= 300 && res.status < 400) {
+    throw new UserError(`Buffer membalas dengan redirect (HTTP ${res.status}) yang tidak diikuti.`);
+  }
   if (res.status === 401 || res.status === 403) {
     throw new UserError("Buffer menolak API key untuk akun ini (401/403). Periksa atau buat ulang API key-nya.");
   }

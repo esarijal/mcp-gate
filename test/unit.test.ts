@@ -159,6 +159,14 @@ test("error Buffer: 401, 429, MutationError ditangani dengan pesan aman", async 
     await assert.rejects(bufferGraphQL("k", "query{x}"), /API key/);
     globalThis.fetch = (async () => new Response("", { status: 429, headers: { "retry-after": "30" } })) as typeof fetch;
     await assert.rejects(bufferGraphQL("k", "query{x}"), /30 detik/);
+    // Workers menolak redirect "error"; redirect wajib "manual" dan 3xx tidak diikuti.
+    let redirectMode: RequestRedirect | undefined;
+    globalThis.fetch = (async (_url: string, init: RequestInit) => {
+      redirectMode = init.redirect;
+      return new Response("", { status: 302, headers: { location: "https://evil.example/" } });
+    }) as typeof fetch;
+    await assert.rejects(bufferGraphQL("k", "query{x}"), /redirect/);
+    assert.equal(redirectMode, "manual");
     globalThis.fetch = (async () => {
       throw new TypeError("internal-secret-detail");
     }) as typeof fetch;
